@@ -1,6 +1,9 @@
 'use strict';
 
 // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+
+
+
 let getRandomIntInclusive = function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -11,7 +14,7 @@ let svg = d3.select('svg');
 let width = +svg.attr('width');
 let height = +svg.attr('height');
 let asteroidBelt = svg.append('g').attr('id', 'asteroidBelt');
-svg.append('g').attr('id', 'player');
+svg.append('g').attr('id', 'playerGroup');
 
 let asteroids = [];
 let numAsteroids = 10;
@@ -40,9 +43,24 @@ let drag = d3.drag()
       .attr('cy', d => d.y);
   });
 
+let checkCollisions = function checkCollisions(asteroid) {
+  d3.select('#player').each(function (player) {
+    let aX = asteroid.cx.baseVal.value;
+    let aY = asteroid.cy.baseVal.value;
+
+    let separation = Math.sqrt(Math.pow((aX - player.x), 2) + Math.pow((aY - player.y), 2));
+
+    if (separation < 2 * 15) {
+      console.log(separation);
+      console.log('hit detected');
+    }
+  });
+};
+
 let update = function update(data) {
-  let p = d3.select('g#player').selectAll('circle').data(player);
+  let p = d3.select('g#playerGroup').selectAll('circle').data(player);
   p.enter().append('circle')
+    .attr('id', 'player')
     .attr('class', 'player')
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
@@ -57,6 +75,7 @@ let update = function update(data) {
   // Enter
   a.enter().append('circle')
     .attr('class', 'asteroid enter')
+    // .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .attr('r', 15)
@@ -64,7 +83,18 @@ let update = function update(data) {
     .each(function (d, i) {
       d3.select(this).transition()
         .duration(2000)
-        .ease(d3.easePolyInOut)
+        .tween('custom', function () {
+          let asteroid = this;
+
+          return function (t) {
+            checkCollisions(asteroid);
+            // Calculate collisions
+            // calculate inbetween x
+            // calculate inbetween y
+            // return new (inbetween) position
+          };
+        })
+        // .attr('transform', d => 'translate(' + getRandomIntInclusive(1, width) + ',' + getRandomIntInclusive(1, height) + ')');
         .attr('cx', function (d) {
           return getRandomIntInclusive(1, width);
         })
