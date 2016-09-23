@@ -1,13 +1,16 @@
 'use strict';
 
 // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-
-
-
 let getRandomIntInclusive = function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+let game = {
+  curScore: 0,
+  highScore: 0,
+  collisions: 0
 };
 
 let svg = d3.select('svg');
@@ -31,9 +34,6 @@ let player = [{
   y: height / 2
 }];
 
-
-
-
 let drag = d3.drag()
   .on('drag', function(d, i) {
     d.x += d3.event.dx;
@@ -43,6 +43,26 @@ let drag = d3.drag()
       .attr('cy', d => d.y);
   });
 
+let updateHighScore = function updateHighScore() {
+  if (game.curScore > game.highScore) {
+    game.highScore = game.curScore;
+    d3.select('#currentHighScore').text(game.highScore.toString());
+  }
+};
+
+let updateScore = function updateScore() {
+  d3.select('#currentScore').text(game.curScore.toString());
+};
+
+let updateCollisions = function updateCollisions() {
+  d3.select('#collisions').text(game.collisions.toString());
+};
+
+let onCollisions = function onCollisions() {
+  updateScore();
+  updateCollisions();
+};
+
 let checkCollisions = function checkCollisions(asteroid) {
   d3.select('#player').each(function (player) {
     let aX = asteroid.cx.baseVal.value;
@@ -51,13 +71,18 @@ let checkCollisions = function checkCollisions(asteroid) {
     let separation = Math.sqrt(Math.pow((aX - player.x), 2) + Math.pow((aY - player.y), 2));
 
     if (separation < 2 * 15) {
-      console.log(separation);
-      console.log('hit detected');
+      updateHighScore();
+      game.curScore = 0;
+      game.collisions++;
+      onCollisions();
     }
   });
 };
 
 let update = function update(data) {
+  // Draw Score
+  updateScore();
+
   let p = d3.select('g#playerGroup').selectAll('circle').data(player);
   p.enter().append('circle')
     .attr('id', 'player')
@@ -75,7 +100,6 @@ let update = function update(data) {
   // Enter
   a.enter().append('circle')
     .attr('class', 'asteroid enter')
-    // .attr('transform', d => 'translate(' + d.x + ',' + d.y + ')')
     .attr('cx', d => d.x)
     .attr('cy', d => d.y)
     .attr('r', 15)
@@ -88,13 +112,8 @@ let update = function update(data) {
 
           return function (t) {
             checkCollisions(asteroid);
-            // Calculate collisions
-            // calculate inbetween x
-            // calculate inbetween y
-            // return new (inbetween) position
           };
         })
-        // .attr('transform', d => 'translate(' + getRandomIntInclusive(1, width) + ',' + getRandomIntInclusive(1, height) + ')');
         .attr('cx', function (d) {
           return getRandomIntInclusive(1, width);
         })
@@ -105,12 +124,12 @@ let update = function update(data) {
 
   // Exit
   a.exit().remove();
-
 };
 
 update(asteroids);
 
 d3.interval(() => {
+  game.curScore += 1;
   update(asteroids);
 }, 2000);
 
