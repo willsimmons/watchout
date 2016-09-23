@@ -4,6 +4,14 @@
     <link rel='stylesheet' type='css' href='styles.css'>
   </head>
   <body>
+  <!--
+    1. Draw the elements in an svg object
+    2. Make it so that the enemies move to a new random location every second
+    3. Make a differently-colored dot to represent the player. Make it draggable.
+    4. Detect when an enemy touches you
+    5. Keep track of the user's score and display it
+  -->
+    <svg width="400" height="400"></svg>
     <div class="scoreboard">
       <!-- Modify the scoreboard when important events occur in your game! -->
       <div class="highscore">High score: <span>0</span></div>
@@ -11,7 +19,7 @@
       <div class="collisions">Collisions: <span>0</span></div>
     </div>
     <div class="board"><div class="mouse"></div></div>
-    <script src="lib/d3.js" charset="utf-8"></script>
+    <script src="lib/d3.min.js" charset="utf-8"></script>
     <script src='watchout.js'></script>
   </body>
 </html>
