@@ -1,11 +1,18 @@
 'use strict';
 
-let asteroids = [{name: 'asteroid1', x: 100, y: 100}];
+// ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let asteroids = new Array(10);
 
 let svg = d3.select('svg');
 let width = +svg.attr('width');
 let height = +svg.attr('height');
-let g = svg.append('g').attr('transform', 'translate(40, 40)');
+let g = svg.append('g');
 
 let update = function update(data) {
   let a = g.selectAll('circle').data(data);
@@ -20,10 +27,13 @@ let update = function update(data) {
       .attr('r', 15)
     .merge(a)
       .attr('cx', function (d) {
-        return this.cx.baseVal.value + 1;
+        //let oldX = this.cx.baseVal.value;
+        //let newX = Math.random() *
+        return getRandomIntInclusive(1, width);
       })
       .attr('cy', function (d) {
-        return this.cy.baseVal.value + 1;
+        //return this.cy.baseVal.value + 1;
+        return getRandomIntInclusive(1, height);
       });
 
   // Exit
