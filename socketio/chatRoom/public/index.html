@@ -12,14 +12,34 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    <style>
+      .player {
+        fill: #ffa115;
+      }
+
+      .asteroid {
+        fill: #ccc;
+        stroke: #a0a0a0;
+        stroke-width: 3px;
+      }
+    </style>
   </head>
   <body>
+    <svg width="400" height="400"></svg>
+    <div class="scoreboard">
+      <!-- Modify the scoreboard when important events occur in your game! -->
+      <div class="highscore">High score: <span id="currentHighScore">0</span></div>
+      <div class="current">Current score: <span id="currentScore">0</span></div>
+      <div class="collisions">Collisions: <span id="collisions">0</span></div>
+    </div>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src= '/socket.io/socket.io.js'></script>
+    <script src="lib2/d3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src = 'watchout.js'></script>
     <script type="text/javascript" src = './app.js'></script>
   </body>
 </html>
